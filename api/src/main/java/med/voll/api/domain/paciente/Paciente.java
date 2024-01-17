@@ -1,58 +1,57 @@
-package med.voll.api.medico;
+package med.voll.api.domain.paciente;
 
 import jakarta.persistence.*;
-import lombok.*;
-import med.voll.api.endereco.Endereco;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import med.voll.api.domain.endereco.Endereco;
+import org.springframework.web.bind.annotation.RequestBody;
 
-@Table(name="medicos")
-@Entity(name="Medico")
+@Table(name="Pacientes")
+@Entity(name="Paciente")
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of="id") //Só vai gerar do id
-public class Medico {
+@NoArgsConstructor
+@EqualsAndHashCode(of="id")
+public class Paciente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nome;
-    private String crm;
     private String email;
     private String telefone;
+    private String cpf;
     private boolean ativo;
 
-    @Enumerated(EnumType.STRING)
-    private Especialidade especialidade;
-
-    @Embedded //No banco de dados vai considerar que endereço faz parte da tabela medico
+    @Embedded
     private Endereco endereco;
 
-
-    public Medico(DadosCadastroMedico dados){
+    public Paciente(@RequestBody @Valid DadosCadastroPaciente dados){
         this.ativo = true;
         this.nome = dados.nome();
         this.email = dados.email();
         this.telefone = dados.telefone();
-        this.crm = dados.crm();
-        this.especialidade = dados.especialidade();
+        this.cpf = dados.cpf();
         this.endereco = new Endereco(dados.endereco());
     }
 
-    public void atualizarMedico(DadosAtualizacaoMedico dados) {
-        if (dados.nome() != null){
+    public void atualizarPaciente(DadosAtualizacaoPaciente dados) {
+        if(dados.nome() != null){
             this.nome = dados.nome();
         }
-        if (dados.telefone() != null){
+        if (dados.telefone() !=  null){
             this.telefone = dados.telefone();
         }
         if (dados.endereco() != null){
             this.endereco.atualizarEndereco(dados.endereco());
-
         }
     }
 
-    public void inativarMedico() {
+    public void inativarPaciente() {
         this.ativo = false;
     }
 }
