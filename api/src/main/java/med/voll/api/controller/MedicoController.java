@@ -17,13 +17,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/medicos")
 public class MedicoController {
-    @Autowired//injueção de dependências
+    @Autowired//injeção de dependências
     private MedicoRepository repository;
 
     @PostMapping
     @Transactional
     public ResponseEntity cadastraMedico(@RequestBody @Valid DadosCadastroMedico dados, UriComponentsBuilder uriBuilder ){
-
         var medico = new Medico(dados);
         repository.save(medico);
 
@@ -53,6 +52,12 @@ public class MedicoController {
         var medico = repository.getReferenceById(id);
         medico.inativarMedico();
         return ResponseEntity.noContent().build(); //sem conteúdo na resposta
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity detalhar(@PathVariable Long id) {
+        var medico = repository.getReferenceById(id);
+        return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
     }
 
 
